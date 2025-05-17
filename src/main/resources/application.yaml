@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: main-service
+  datasource:
+    url: jdbc:postgres://localhost:5432/errorhack
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+springdoc:
+  swagger-ui:
+    path: /docs
