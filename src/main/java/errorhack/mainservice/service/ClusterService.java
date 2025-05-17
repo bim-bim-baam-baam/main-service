@@ -20,6 +20,7 @@ public class ClusterService {
     private final VersionRepository versionRepository;
 
     private final ClusterMapper clusterMapper;
+    private final MLService mlService;
 
     public VersionDto getClusters(String url) {
 
@@ -32,7 +33,7 @@ public class ClusterService {
             );
         }
 
-        // TODO: Запуск пайплайна
+        mlService.processLogs(url);
 
         return new VersionDto(VersionStatus.PARSING, List.of());
     }
