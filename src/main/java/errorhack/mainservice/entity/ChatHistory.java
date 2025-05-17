@@ -17,7 +17,6 @@ public class ChatHistory {
     @Column(nullable = false)
     private Long chatId;
 
-    @Column(nullable = false)
     private String sender;
 
     @Column(nullable = false)

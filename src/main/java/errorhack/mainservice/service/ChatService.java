@@ -1,13 +1,16 @@
 package errorhack.mainservice.service;
 
+import errorhack.mainservice.client.LLMClient;
 import errorhack.mainservice.dto.ChatDto;
 import errorhack.mainservice.dto.ChatHistoryDto;
 import errorhack.mainservice.entity.Chat;
 import errorhack.mainservice.entity.ChatHistory;
 import errorhack.mainservice.mapper.ChatHistoryMapper;
 import errorhack.mainservice.mapper.ChatMapper;
+import errorhack.mainservice.model.AskRequest;
 import errorhack.mainservice.repository.ChatHistoryRepository;
 import errorhack.mainservice.repository.ChatRepository;
+import errorhack.mainservice.response.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ public class ChatService {
     private final ChatHistoryRepository chatHistoryRepository;
     private final ChatMapper chatMapper;
     private final ChatHistoryMapper chatHistoryMapper;
+    private final LLMClient llmClient;
 
     // 1. Получить все чаты без истории
     public List<ChatDto> getAllChats() {
@@ -41,15 +45,28 @@ public class ChatService {
     }
 
     // 3. Отправить сообщение в чат
-    public ChatHistoryDto sendMessage(Long chatId, String sender, String message) {
+    public MessageResponse sendMessage(Long chatId, String sender, String message) {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat not found"));
         ChatHistory history = new ChatHistory();
         history.setChatId(chat.getId());
-        history.setSender(sender);
         history.setMessage(message);
+        history.setSender(sender);
         ChatHistory savedHistory = chatHistoryRepository.save(history);
-        return chatHistoryMapper.toChatHistoryDto(savedHistory);
+        ChatHistoryDto chatHistoryDto = chatHistoryMapper.toChatHistoryDto(savedHistory);
+
+        String prompt = chat.getContext();
+        String petrAns = llmClient.ask(new AskRequest(prompt, message));
+
+
+        // Сохраняем ответ от PETR в историю
+        ChatHistory petrHistory = new ChatHistory();
+        petrHistory.setChatId(chat.getId());
+        petrHistory.setMessage(petrAns);
+        petrHistory.setSender("PETR");
+        chatHistoryRepository.save(petrHistory);
+
+        return new MessageResponse(petrAns);
     }
 
     // 4. Изменить контекст чата
