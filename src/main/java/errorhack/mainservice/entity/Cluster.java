@@ -19,6 +19,9 @@ public class Cluster {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "version_id", nullable = false)
     private Version version;
