@@ -15,7 +15,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class RestClientConfig {
 
     @Bean
-    public ParsingClient botRestClient(RestClient.Builder builder, ParsingRestClientProperty properties) {
+    public ParsingClient parsingClient(RestClient.Builder builder, ParsingRestClientProperty properties) {
         RestClient restClient = buildBaseRestClient(builder, properties).build();
 
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
