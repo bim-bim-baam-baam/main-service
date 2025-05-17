@@ -13,6 +13,8 @@ rest:
   client:
     parsing:
       base-url: http://localhost:8001
+    clustering:
+      base-url: http://localhost:8002
 
 springdoc:
   swagger-ui:

@@ -1,7 +1,9 @@
 package errorhack.mainservice.config;
 
+import errorhack.mainservice.client.ClusteringClient;
 import errorhack.mainservice.client.ParsingClient;
 import errorhack.mainservice.client.properties.AbstractRestClientProperties;
+import errorhack.mainservice.client.properties.ClusteringRestClientProperty;
 import errorhack.mainservice.client.properties.ParsingRestClientProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,11 +13,11 @@ import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 @Configuration
-@EnableConfigurationProperties(ParsingRestClientProperty.class)
+@EnableConfigurationProperties({ParsingRestClientProperty.class, ClusteringRestClientProperty.class})
 public class RestClientConfig {
 
     @Bean
-    public ParsingClient botRestClient(RestClient.Builder builder, ParsingRestClientProperty properties) {
+    public ParsingClient parsingClient(RestClient.Builder builder, ParsingRestClientProperty properties) {
         RestClient restClient = buildBaseRestClient(builder, properties).build();
 
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
@@ -25,9 +27,19 @@ public class RestClientConfig {
         return factory.createClient(ParsingClient.class);
     }
 
+    @Bean
+    public ClusteringClient clusteringClient(RestClient.Builder builder, ClusteringRestClientProperty properties) {
+        RestClient restClient = buildBaseRestClient(builder, properties).build();
+
+        RestClientAdapter adapter = RestClientAdapter.create(restClient);
+        HttpServiceProxyFactory factory =
+                HttpServiceProxyFactory.builderFor(adapter).build();
+
+        return factory.createClient(ClusteringClient.class);
+    }
+
     private RestClient.Builder buildBaseRestClient(
             RestClient.Builder builder, AbstractRestClientProperties properties) {
-
         return builder.baseUrl(properties.getBaseUrl());
     }
 }
