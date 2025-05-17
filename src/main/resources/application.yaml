@@ -2,9 +2,9 @@ spring:
   application:
     name: main-service
   datasource:
-    url: jdbc:postgres://localhost:5432/errorhack
-    username: postgres
-    password: postgres
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: create-drop
