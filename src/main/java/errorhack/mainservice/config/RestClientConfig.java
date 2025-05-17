@@ -1,10 +1,10 @@
 package errorhack.mainservice.config;
 
 import errorhack.mainservice.client.ClusteringClient;
+import errorhack.mainservice.client.LLMClient;
 import errorhack.mainservice.client.ParsingClient;
 import errorhack.mainservice.client.properties.AbstractRestClientProperties;
 import errorhack.mainservice.client.properties.ClusteringRestClientProperty;
-import errorhack.mainservice.client.properties.AbstractRestClientProperties;
 import errorhack.mainservice.client.properties.LLMRestClientProperty;
 import errorhack.mainservice.client.properties.ParsingRestClientProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,6 +28,7 @@ public class RestClientConfig {
 
         return factory.createClient(ParsingClient.class);
     }
+
     @Bean
     public LLMClient llmClient(RestClient.Builder builder, LLMRestClientProperty properties) {
         RestClient restClient = buildBaseRestClient(builder, properties).build();

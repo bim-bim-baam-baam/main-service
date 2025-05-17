@@ -43,12 +43,7 @@ public class MLService {
 
         updateStatus(version, VersionStatus.LLM_PARSING);
 
-        
-
         updateStatus(version, VersionStatus.CLUSTERING);
-
-        List<ParsingEntry> parsingEntries = parsingClient.parseUrl(url);
-        log.info("Received {} parsing entries", parsingEntries.size());
 
         // Convert parsing entries to the format expected by clustering APIs
         List<Map<String, String>> packageDataList = parsingEntries.stream()
@@ -66,14 +61,14 @@ public class MLService {
         PackageData petrData = new PackageData(packageDataList);
         List<Map<String, Object>> petrClusters = clusteringClient.petrClusterPackages(petrData);
         PetrClusterSummary petrSummary = clusteringClient.petrGetClustersSummary(petrData);
-        
+
         log.info("Petr's clustering results: {} clusters", petrSummary.getTotalClusters());
         log.info("Language statistics: {}", petrSummary.getLanguageStats());
 
         // // Call Kirill's clustering endpoint
         // KirillPackageData kirillData = new KirillPackageData(packageDataList, 5); // You might want to make this configurable
         // List<Map<String, Object>> kirillClusters = clusteringClient.kirillClusterPackages(kirillData);
-        
+
         // log.info("Kirill's clustering results: {} clusters", kirillClusters.size());
 
 
