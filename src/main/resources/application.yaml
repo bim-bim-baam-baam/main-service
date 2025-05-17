@@ -9,6 +9,13 @@ spring:
     hibernate:
       ddl-auto: create-drop
 
+rest:
+  client:
+    parsing:
+      base-url: http://localhost:8001
+
+
+
 springdoc:
   swagger-ui:
     path: /docs

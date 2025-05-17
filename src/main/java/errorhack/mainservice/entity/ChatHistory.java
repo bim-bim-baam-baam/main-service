@@ -9,6 +9,11 @@ import lombok.Setter;
 @Entity
 @Table(name="chat_history")
 public class ChatHistory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
+
     @Column(nullable = false)
     private Long chatId;
 

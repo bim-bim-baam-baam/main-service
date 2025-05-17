@@ -11,6 +11,5 @@ import java.util.List;
 public class ClusterDto {
     Long id;
     String name;
-    String version;
     List<PackageErrorDto> packages;
 }

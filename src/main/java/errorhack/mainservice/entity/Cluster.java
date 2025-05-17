@@ -19,8 +19,9 @@ public class Cluster {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String version;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "version_id", nullable = false)
+    private Version version;
 
     @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PackageError> packageErrors;
