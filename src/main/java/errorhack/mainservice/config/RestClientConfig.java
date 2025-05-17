@@ -2,7 +2,10 @@ package errorhack.mainservice.config;
 
 import errorhack.mainservice.client.ClusteringClient;
 import errorhack.mainservice.client.LLMClient;
+<<<<<<< HEAD
 import errorhack.mainservice.client.LLMParserClient;
+=======
+>>>>>>> 896c258daa881710b2066ab5e4d7deac45131408
 import errorhack.mainservice.client.ParsingClient;
 import errorhack.mainservice.client.properties.AbstractRestClientProperties;
 import errorhack.mainservice.client.properties.ClusteringRestClientProperty;
