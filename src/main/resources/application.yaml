@@ -12,9 +12,10 @@ spring:
 rest:
   client:
     parsing:
-      base-url: http://localhost:8001
+      base-url: http://error-parser:8001
     clustering:
-      base-url: http://localhost:8002
+      base-url: http://cluster-service:8002
+
 
 springdoc:
   swagger-ui:
