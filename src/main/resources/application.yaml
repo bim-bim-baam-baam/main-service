@@ -18,8 +18,6 @@ rest:
     llm:
       base-url: http://opto-llm-parser:8000
 
-
-
 springdoc:
   swagger-ui:
     path: /docs

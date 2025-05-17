@@ -1,6 +1,7 @@
 package errorhack.mainservice.service;
 
 import errorhack.mainservice.client.ClusteringClient;
+import errorhack.mainservice.client.LLMParserClient;
 import errorhack.mainservice.client.ParsingClient;
 import errorhack.mainservice.model.KirillPackageData;
 import errorhack.mainservice.model.PackageData;
@@ -28,6 +29,7 @@ public class MLService {
 
     private final ParsingClient parsingClient;
     private final ClusteringClient clusteringClient;
+    private final LLMParserClient llmParserClient;
 
     // TODO: Process and store the clustering results
     private final VersionRepository versionRepository;
@@ -43,24 +45,11 @@ public class MLService {
 
         updateStatus(version, VersionStatus.LLM_PARSING);
 
-        
+        // Get pre-computed LLM parsed data
+        List<Map<String, String>> packageDataList = llmParserClient.getLLMParsedData();
+        log.info("Received {} LLM parsed entries", packageDataList.size());
 
         updateStatus(version, VersionStatus.CLUSTERING);
-
-        List<ParsingEntry> parsingEntries = parsingClient.parseUrl(url);
-        log.info("Received {} parsing entries", parsingEntries.size());
-
-        // Convert parsing entries to the format expected by clustering APIs
-        List<Map<String, String>> packageDataList = parsingEntries.stream()
-                .map(entry -> {
-                    Map<String, String> data = new HashMap<>();
-                    data.put("package", entry.pack());
-                    data.put("error_type", "error"); // You might want to extract this from errors
-                    data.put("description", entry.errors());
-                    data.put("programming_language", "java"); // You might want to detect this
-                    return data;
-                })
-                .collect(Collectors.toList());
 
         // Call Petr's clustering endpoints
         PackageData petrData = new PackageData(packageDataList);
@@ -75,7 +64,6 @@ public class MLService {
         // List<Map<String, Object>> kirillClusters = clusteringClient.kirillClusterPackages(kirillData);
         
         // log.info("Kirill's clustering results: {} clusters", kirillClusters.size());
-
 
         // TODO: ПОХОД В ДИПСИК
 
