@@ -3,24 +3,23 @@ package errorhack.mainservice.service;
 import errorhack.mainservice.client.ClusteringClient;
 import errorhack.mainservice.client.LLMParserClient;
 import errorhack.mainservice.client.ParsingClient;
-import errorhack.mainservice.model.KirillPackageData;
+import errorhack.mainservice.entity.Cluster;
+import errorhack.mainservice.entity.Version;
+import errorhack.mainservice.entity.VersionStatus;
 import errorhack.mainservice.model.PackageData;
 import errorhack.mainservice.model.ParsingEntry;
 import errorhack.mainservice.model.PetrClusterSummary;
-import errorhack.mainservice.entity.Version;
-import errorhack.mainservice.entity.VersionStatus;
-import errorhack.mainservice.model.ParsingEntry;
 import errorhack.mainservice.model.UrlRequest;
+import errorhack.mainservice.repository.ClusterRepository;
+import errorhack.mainservice.repository.PackageRepository;
 import errorhack.mainservice.repository.VersionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,6 +29,8 @@ public class MLService {
     private final ParsingClient parsingClient;
     private final ClusteringClient clusteringClient;
     private final LLMParserClient llmParserClient;
+    private final ClusterRepository clusterRepository;
+    private final PackageRepository packageRepository;
 
     // TODO: Process and store the clustering results
     private final VersionRepository versionRepository;
@@ -45,33 +46,18 @@ public class MLService {
 
         updateStatus(version, VersionStatus.LLM_PARSING);
 
-<<<<<<< HEAD
         // Get pre-computed LLM parsed data
         List<Map<String, String>> packageDataList = llmParserClient.getLLMParsedData();
         log.info("Received {} LLM parsed entries", packageDataList.size());
 
         updateStatus(version, VersionStatus.CLUSTERING);
 
-=======
-        updateStatus(version, VersionStatus.CLUSTERING);
-
-        // Convert parsing entries to the format expected by clustering APIs
-        List<Map<String, String>> packageDataList = parsingEntries.stream()
-                .map(entry -> {
-                    Map<String, String> data = new HashMap<>();
-                    data.put("package", entry.pack());
-                    data.put("error_type", "error"); // You might want to extract this from errors
-                    data.put("description", entry.errors());
-                    data.put("programming_language", "java"); // You might want to detect this
-                    return data;
-                })
-                .collect(Collectors.toList());
-
->>>>>>> 896c258daa881710b2066ab5e4d7deac45131408
         // Call Petr's clustering endpoints
         PackageData petrData = new PackageData(packageDataList);
         List<Map<String, Object>> petrClusters = clusteringClient.petrClusterPackages(petrData);
         PetrClusterSummary petrSummary = clusteringClient.petrGetClustersSummary(petrData);
+
+        log.info("Received {} petr clusters", petrClusters.getFirst());
 
         log.info("Petr's clustering results: {} clusters", petrSummary.getTotalClusters());
         log.info("Language statistics: {}", petrSummary.getLanguageStats());
@@ -83,6 +69,9 @@ public class MLService {
         // log.info("Kirill's clustering results: {} clusters", kirillClusters.size());
 
         // TODO: ПОХОД В ДИПСИК
+
+        Cluster cluster = new Cluster();
+
 
         updateStatus(version, VersionStatus.OK);
     }
